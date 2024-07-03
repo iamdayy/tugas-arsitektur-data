@@ -39,23 +39,32 @@ const initModal = () => {
   modal.value = new Modal($targetEl, options, instanceOptions)
 
 }
+const logged = ref<boolean>(true);
+
 const login = () => {
   if (form.value.username == 'dayyan syauqi' && form.value.password == 'password') {
     modal.value?.hide();
-    localStorage.setItem('logged', 'true')
+    localStorage.setItem('logged', 'true');
+    logged.value = true;
   } else {
     message.value = "! Username is 'dayyan syauqi' & password is 'password'"
   }
 }
 
+const logout = () => {
+  localStorage.clear();
+  modal.value?.show();
+  logged.value = false;
+}
 onMounted(() => {
   initModal();
-  const logged = localStorage.getItem('logged');
-  setTimeout(() => {
-    if (!logged) {
+  const loggedin = localStorage.getItem('logged');
+  if (!loggedin) {
+    logged.value = false;
+    setTimeout(() => {
       modal.value?.show();
-    }
-  }, 100);
+    }, 100);
+  }
 })
 </script>
 
@@ -78,13 +87,27 @@ onMounted(() => {
         <ul
           class="flex flex-col p-4 mt-4 font-medium border border-gray-100 rounded-lg md:p-0 bg-gray-50/30 md:flex-row md:space-x-8 rtl:space-x-reverse md:mt-0 md:border-0 md:bg-transparent">
           <li>
-            <p class="block px-3 py-2 text-white bg-blue-700 rounded md:bg-transparent md:text-blue-700 md:p-0 dark:text-white md:dark:text-blue-500"
+            <p class="block px-3 py-2 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent"
               aria-current="page">10223055</p>
           </li>
           <li>
             <p
               class="block px-3 py-2 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent">
               IM23A</p>
+          </li>
+          <li v-if="logged">
+            <button @click="logout"
+              class="block px-3 py-2 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent">
+              <span class="block md:hidden">
+                Logout
+              </span>
+              <svg class="hidden w-6 h-6 text-red-800 dark:text-white md:block" aria-hidden="true"
+                xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M20 12H8m12 0-4 4m4-4-4-4M9 4H7a3 3 0 0 0-3 3v10a3 3 0 0 0 3 3h2" />
+              </svg>
+
+            </button>
           </li>
         </ul>
       </div>
@@ -113,7 +136,7 @@ onMounted(() => {
             <div>
               <label for="username" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Your
                 username</label>
-              <input type="text" name="username" id="username" v-model="form.username"
+              <input type="text" name="username" id="username" v-model="form.username" @keyup.enter="login"
                 class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
                 placeholder="dayan syauqi" required />
             </div>
@@ -121,6 +144,7 @@ onMounted(() => {
               <label for="password" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Your
                 password</label>
               <input type="password" name="password" id="password" placeholder="password" v-model="form.password"
+                @keyup.enter="login"
                 class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
                 required />
             </div>
